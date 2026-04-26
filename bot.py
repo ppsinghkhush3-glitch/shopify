@@ -1,19 +1,49 @@
-from telethon import TelegramClient, events, Button
+#!/usr/bin/env python3
+"""
+SHOPIII Bot - Railway Deploy Ready
+Python 3.13 + All Keyboards Fixed
+"""
+
+import os
+import sys
 import asyncio
+import logging
+
+# ================== RAILWAY FIXES ==================
+# Fix UTF-8 for Railway
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stderr.reconfigure(encoding='utf-8')
+
+# Python 3.13 IMGHDR EMERGENCY FIX
+try:
+    import imghdr
+except ImportError:
+    import types
+    def fake_what(file, h=None): return None
+    imghdr = types.ModuleType('imghdr')
+    imghdr.what = fake_what
+    sys.modules['imghdr'] = imghdr
+
+# Railway session path fix
+SESSION_NAME = os.getenv('SESSION_NAME', 'shopiii_session')
+
+# ================== IMPORTS ==================
+from telethon import TelegramClient, events, Button
+from telethon.sessions import StringSession
 import aiohttp
 import aiofiles
-import os
 import random
 import time
 import json
 import re
 import sqlite3
-import aiofiles
-import logging
-from typing import List
-import sys
-sys.stdout.reconfigure(encoding='utf-8')
 from datetime import datetime
+from typing import List
+
+# Disable Telethon debug logs
+logging.getLogger('telethon').setLevel(logging.WARNING)
+
+print("🚀 SHOPIII Bot starting on Railway...")
 
 # ================== QSC-01 CONFIG ==================
 CHECKER_API_URL = 'http://108.165.12.183:8081/'
