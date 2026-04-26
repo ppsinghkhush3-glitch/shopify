@@ -8,4 +8,4 @@ python-dateutil==2.9.0.post0
 colorama==0.4.6
 tqdm==4.66.5
 asyncio-throttle==1.0.2
-imghdr2  # Python 3.13 fix
+Pillow==10.4.0
