@@ -175,8 +175,25 @@ def is_premium(user_id):
 # Initialize bot
 from telethon.sessions import StringSession
 
-# Use StringSession instead of SQLiteSession to avoid the issue
-bot = TelegramClient(StringSession(), API_ID, API_HASH).start(bot_token=BOT_TOKEN)
+# ================== ANTI-FLOOD RAILWAY START ==================
+SESSION_NAME = os.getenv('SESSION_NAME', f'shopiii_railway_{random.randint(10000,99999)}')
+bot = TelegramClient(SESSION_NAME, API_ID, API_HASH)
+
+async def safe_start():
+    """Anti-flood startup"""
+    for attempt in range(5):
+        try:
+            print(f"🔄 Start attempt {attempt+1}/5")
+            await bot.start(bot_token=BOT_TOKEN)
+            print("✅ Bot started!")
+            return True
+        except Exception as e:
+            if "FloodWait" in str(e):
+                print("⏳ FloodWait - retrying...")
+                await asyncio.sleep(60)
+            else:
+                await asyncio.sleep(2 ** attempt)
+    return False
 
 for file_path in [SITES_FILE, PROXY_FILE, PREMIUM_FILE, ADMINS_FILE, BANNED_FILE]:
     if not os.path.exists(file_path):
@@ -2075,43 +2092,24 @@ async def user_info(event):
 
 init_database()
 
+# DELETE everything from "async def main():" to end
+
+# ADD THIS INSTEAD:
 async def main():
-    """Railway-safe startup with Premium emoji test"""
+    print("🚀 SHOPIII Railway Fixed!")
     
-    # Railway environment fixes
-    os.environ['PYTHONIOENCODING'] = 'utf-8'
-    sys.stdout.reconfigure(encoding='utf-8')
+    # Create files
+    for f in [SITES_FILE, PROXY_FILE, PREMIUM_FILE, ADMINS_FILE, BANNED_FILE]:
+        if not os.path.exists(f):
+            open(f, 'w', encoding='utf-8').close()
     
-    print("🚀 SHOPIII Railway Premium Edition Starting...")
-    
-    # Initialize files
-    for file in [SITES_FILE, PROXY_FILE, PREMIUM_FILE, ADMINS_FILE, BANNED_FILE]:
-        if not os.path.exists(file):
-            open(file, 'w', encoding='utf-8').close()
-    
-    # Test Premium Emojis on startup
-    print("🧪 Testing Premium Emojis...")
-    test_text = premium_emoji("✅🔥🚀 Premium Emojis LOADED!")
-    print(test_text)
-    
-    # Start bot
-    await init_bot()
-    init_database()
-    
-    print("✅ Bot ready with Premium Emojis!")
-    
-    # Railway graceful disconnect
-    import signal
-    def handle_shutdown():
-        print("🛑 Graceful shutdown...")
-        bot.disconnect()
-    
-    loop = asyncio.get_event_loop()
-    for sig in (signal.SIGTERM, signal.SIGINT):
-        loop.add_signal_handler(sig, handle_shutdown)
+    # Safe start
+    if await safe_start():
+        init_database()
+        print("✅ READY - Premium Emojis ON!")
+        bot.run_until_disconnected()
+    else:
+        print("❌ FAILED TO START")
 
 if __name__ == '__main__':
     asyncio.run(main())
-    bot.run_until_disconnected()
-print("✅ Bot started successfully!")
-bot.run_until_disconnected()
