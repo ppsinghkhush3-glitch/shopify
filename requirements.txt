@@ -1,4 +1,5 @@
-telethon==1.28.2  # ✅ Python 3.13 compatible - NO imghdr issue
+# PIN to Python 3.13 SAFE version
+telethon==1.28.2
 aiohttp==3.10.5
 aiofiles==24.1.0
 requests==2.32.3
@@ -8,3 +9,4 @@ python-dateutil==2.9.0.post0
 colorama==0.4.6
 tqdm==4.66.5
 asyncio-throttle==1.0.2
+imghdr2  # Python 3.13 fix!
