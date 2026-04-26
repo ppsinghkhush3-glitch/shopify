@@ -162,7 +162,10 @@ PREMIUM_EMOJI_IDS = {
 }
 
 # Initialize bot
-bot = TelegramClient('checker_bot', API_ID, API_HASH).start(bot_token=BOT_TOKEN)
+from telethon.sessions import StringSession
+
+# Use StringSession instead of SQLiteSession to avoid the issue
+bot = TelegramClient(StringSession(), API_ID, API_HASH).start(bot_token=BOT_TOKEN)
 
 for file_path in [SITES_FILE, PROXY_FILE, PREMIUM_FILE, ADMINS_FILE, BANNED_FILE]:
     if not os.path.exists(file_path):
