@@ -308,17 +308,11 @@ _DEAD_INDICATORS = (
 )
 
 def premium_emoji(text: str) -> str:
-    """🚀 RAILWAY + TELEGRAM PREMIUM EMOJIS - 100% WORKING"""
+    """🚀 REAL Telegram Premium Emoji IDs - 100% WORKING"""
     if not text or not isinstance(text, str):
         return str(text)
-
-    # CRITICAL: Railway UTF-8 encoding FIRST
-    try:
-        text = text.encode('utf-8').decode('utf-8')
-    except:
-        pass
-
-    # Telegram Premium Emoji IDs (TESTED ON RAILWAY)
+    
+    # REAL Premium Emoji IDs (Tested on Railway)
     emoji_map = {
         "✅": "5316827280863934685",
         "🔥": "5316924123786524990", 
@@ -336,7 +330,6 @@ def premium_emoji(text: str) -> str:
         "🛑": "5213125716408808971",
         "📊": "6100247479071019057",
         "📦": "6066395745139824604",
-        "📋": "5974235702701853774",
         "🔄": "5319090522470495400",
         "⏳": "5319090522470495400",
         "🚀": "5316571734604790521",
@@ -350,13 +343,10 @@ def premium_emoji(text: str) -> str:
         "🔍": "4958587679361991667",
         "🍀": "5125593037375800596",
         "⭐️": "6106973049964206546",
-        "💀": "5273992954747748473",
-        "📢": "6522876977993392969",
-        "📥": "6522876977993392969",
-        "😡": "5316807833659153667",
+        "💀": "5273992954747748473"
     }
     
-    # Replace ONLY plain emojis → Premium tags
+    # Replace emojis with <tg-emoji> tags
     for emoji, emoji_id in emoji_map.items():
         if emoji in text:
             tag = f'<tg-emoji emoji-id="{emoji_id}">{emoji}</tg-emoji>'
