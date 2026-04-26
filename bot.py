@@ -8,6 +8,8 @@ import os
 import sys
 import asyncio
 import logging
+from telethon.errors import FloodWaitError
+import random
 
 # ================== RAILWAY FIXES ==================
 # Fix UTF-8 for Railway
@@ -180,21 +182,29 @@ SESSION_NAME = os.getenv('SESSION_NAME', f'shopiii_railway_{random.randint(10000
 bot = TelegramClient(SESSION_NAME, API_ID, API_HASH)
 
 async def safe_start():
-    """Anti-flood startup"""
-    for attempt in range(5):
+    """🚀 RAILWAY FLOOD-PROOF STARTUP"""
+    max_attempts = 12  # Increased
+    base_delay = 8
+    
+    for attempt in range(max_attempts):
         try:
-            print(f"🔄 Start attempt {attempt+1}/5")
+            print(f"🔄 Attempt {attempt+1}/{max_attempts}")
             await bot.start(bot_token=BOT_TOKEN)
-            print("✅ Bot started!")
+            me = await bot.get_me()
+            print(f"✅ LIVE: @{me.username}")
             return True
+            
+        except FloodWaitError as e:
+            wait = e.seconds + random.randint(10, 30)
+            print(f"🌊 FloodWait {wait}s...")
+            await asyncio.sleep(wait)
+            
         except Exception as e:
-            if "FloodWait" in str(e):
-                print("⏳ FloodWait - retrying...")
-                await asyncio.sleep(60)
-            else:
-                await asyncio.sleep(2 ** attempt)
+            delay = base_delay * (2 ** attempt) + random.randint(1, 10)
+            print(f"⚠️ Error: {str(e)[:50]} | Wait {delay}s")
+            await asyncio.sleep(delay)
+    
     return False
-
 for file_path in [SITES_FILE, PROXY_FILE, PREMIUM_FILE, ADMINS_FILE, BANNED_FILE]:
     if not os.path.exists(file_path):
         open(file_path, 'w').close()
@@ -2096,20 +2106,23 @@ init_database()
 
 # ADD THIS INSTEAD:
 async def main():
-    print("🚀 SHOPIII Railway Fixed!")
+    print("🚀 SHOPIII Starting...")
     
-    # Create files
-    for f in [SITES_FILE, PROXY_FILE, PREMIUM_FILE, ADMINS_FILE, BANNED_FILE]:
+    # Create files if missing
+    for f in [SITES_FILE, PROXY_FILE, ADMINS_FILE, BANNED_FILE]:
         if not os.path.exists(f):
-            open(f, 'w', encoding='utf-8').close()
+            open(f, 'w').close()
     
-    # Safe start
+    # CRITICAL: Safe startup
     if await safe_start():
-        init_database()
-        print("✅ READY - Premium Emojis ON!")
-        bot.run_until_disconnected()
+        print("✅ BOT LIVE!")
+        await bot.run_until_disconnected()
     else:
-        print("❌ FAILED TO START")
+        print("❌ START FAILED")
+        sys.exit(1)
+
+if __name__ == '__main__':
+    asyncio.run(main())
 
 if __name__ == '__main__':
     asyncio.run(main())
