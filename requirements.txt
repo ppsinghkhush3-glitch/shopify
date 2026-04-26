@@ -1,4 +1,4 @@
-telethon==1.28.2  # Fixed version - compatible with Python 3.13
+telethon==1.28.2  # ✅ Python 3.13 compatible - NO imghdr issue
 aiohttp==3.10.5
 aiofiles==24.1.0
 requests==2.32.3
