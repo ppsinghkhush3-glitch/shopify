@@ -12,17 +12,35 @@ import logging
 # ================== RAILWAY FIXES ==================
 # Fix UTF-8 for Railway
 sys.stdout.reconfigure(encoding='utf-8')
-sys.stderr.reconfigure(encoding='utf-8')
+#!/usr/bin/env python3
+"""
+SHOPIII Bot - Railway Deploy Ready
+Python 3.13 + All Keyboards Fixed
+"""
 
-# Python 3.13 IMGHDR EMERGENCY FIX
+import os
+import sys
+import asyncio
+import logging
+import warnings
+
+# ================== PYTHON 3.13 IMGHDR PERFECT FIX ==================
+# Suppress deprecation warning + handle removal
+warnings.filterwarnings("ignore", message=".*imghdr.*", category=DeprecationWarning)
+
 try:
     import imghdr
-except ImportError:
+except (ImportError, DeprecationWarning):
+    # Python 3.13+ or deprecated - create fake module
     import types
-    def fake_what(file, h=None): return None
+    def fake_what(file, h=None): 
+        return None
     imghdr = types.ModuleType('imghdr')
     imghdr.what = fake_what
     sys.modules['imghdr'] = imghdr
+
+# Railway session path fix
+SESSION_NAME = os.getenv('SESSION_NAME', 'shopiii_session')
 
 # Railway session path fix
 SESSION_NAME = os.getenv('SESSION_NAME', 'shopiii_session')
