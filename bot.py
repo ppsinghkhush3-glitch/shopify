@@ -154,43 +154,6 @@ def is_premium(user_id):
     except:
         return False
 
-
-# Premium Custom Emoji IDs (bot must be created with Telegram Premium account)
-# Use @RawDataBot to get custom_emoji_id for any premium emoji
-PREMIUM_EMOJI_IDS = {
-    "✅": "5316827280863934685",   # ✨ Multi Sparkles / Celebration
-    "🔥": "5316924123786524990",   # 🔥 Purple Flame Heart
-    "❌": "5316660455744223443",   # 💀 White Skull (Dark Glow)
-    "⚡": "5319070993254201336",   # ⚡ Yellow Lightning Bolt
-    "💳": "5801187506091203884",   # 💫 Floating Color Dots
-    "💠": "6258183253430112949",   # 🌀 Neon Circle Rings
-    "📝": "5316747214083603534",   # ✨
-    "🌐": "5316635510574169206",   # ⚡
-    "🎯": "5316901708352207829",   # 🟠🟡🟢 Triple Ring Loader
-    "🤖": "5316877531981297949",   # 😼 Dark Cat Face
-    "🤵": "5316887736823591263",   # 🧠 Golden Maze
-    "💰": "5801187506091203884",   # 💫
-    "⏸️": "4956442665320186933",   # ⚙️ Arc Reactor
-    "▶️": "6073589106691019795",   # ➡️ Neon Arrow Right
-    "🛑": "5213125716408808971",   # ⚠️ Red Warning Triangle
-    "📊": "6100247479071019057",   # 🌀
-    "📦": "6066395745139824604",   # 🎀 Neon Pink Bow
-    "📋": "5974235702701853774",   # Triple Ring
-    "🔄": "5319090522470495400",   # 🌀 Neon Circle Rings
-    "⏳": "5319090522470495400",   # 🌀
-    "🚀": "5316571734604790521",   # 🎉 Color Confetti
-    "⚠️": "5213125716408808971",   # ⚠️ Red Warning Triangle
-    "💎": "5116163917713769254",   # ✨
-    "👤": "5316887736823591263",  
-    "🆔": "6035239240625820254", 
-    "🏦": "5332455502917949981",
-    "👑": "6062091861491715819",
-    "🌍": "4956560549287560231",
-    "🔍": "4958587679361991667",
-    "🍀": "5125593037375800596",
-    "⭐️": "6106973049964206546",
-}
-
 # Initialize bot
 from telethon.sessions import StringSession
 
@@ -300,25 +263,17 @@ _DEAD_INDICATORS = (
 )
 
 def premium_emoji(text: str) -> str:
-    """ULTIMATE FIXED Premium Emoji - No Syntax Error"""
+    """🚀 FIXED Premium Emoji - 100% Working"""
     if not text or not isinstance(text, str):
         return str(text)
 
-    # Clean any existing tags
-    result = re.sub(r'<tg-emoji emoji-id="[^"]+">([^<]+)</tg-emoji>', r'\1', text)
-
-    # Main replacements
-    replacements = sorted(PREMIUM_EMOJI_IDS.items(), key=lambda x: len(x[0]), reverse=True)
+    # 1. Remove existing emoji tags FIRST
+    text = re.sub(r'<tg-emoji[^>]*>.*?</tg-emoji>', '', text)
     
-    for emoji, doc_id in replacements:
-        if emoji in result:
-            tag = f'<tg-emoji emoji-id="{doc_id}">{emoji}</tg-emoji>'
-            result = result.replace(emoji, tag)
-
-    # Extra safety replacements
-    extra_fix = {
+    # 2. CRITICAL: Replace ONLY plain emojis → tags (no double encoding!)
+    emoji_map = {
         "✅": "5316827280863934685",
-        "🔥": "5316924123786524990",
+        "🔥": "5316924123786524990", 
         "❌": "5316660455744223443",
         "⚡": "5319070993254201336",
         "💳": "5801187506091203884",
@@ -326,18 +281,36 @@ def premium_emoji(text: str) -> str:
         "📝": "5316747214083603534",
         "🌐": "5316635510574169206",
         "🎯": "5316901708352207829",
+        "🤖": "5316877531981297949",
         "💰": "5801187506091203884",
-        "🚀": "6282977077427702833",
+        "⏸️": "4956442665320186933",
+        "▶️": "6073589106691019795",
+        "🛑": "5213125716408808971",
+        "📊": "6100247479071019057",
+        "📦": "6066395745139824604",
+        "📋": "5974235702701853774",
+        "🔄": "5319090522470495400",
+        "⏳": "5319090522470495400",
+        "🚀": "5316571734604790521",
         "⚠️": "5213125716408808971",
-        "💎": "5316827280863934685",
+        "💎": "5116163917713769254",
+        "👤": "5316887736823591263",
+        "🆔": "6035239240625820254",
+        "🏦": "5332455502917949981",
+        "👑": "6062091861491715819",
+        "🌍": "4956560549287560231",
+        "🔍": "4958587679361991667",
+        "🍀": "5125593037375800596",
+        "⭐️": "6106973049964206546",
     }
     
-    for emoji, doc_id in extra_fix.items():
-        if emoji in result:
-            tag = f'<tg-emoji emoji-id="{doc_id}">{emoji}</tg-emoji>'
-            result = result.replace(emoji, tag)
-
-    return result
+    # Replace in REVERSE order (longest first)
+    for emoji, emoji_id in sorted(emoji_map.items(), key=lambda x: len(x[0]), reverse=True):
+        if emoji in text:
+            tag = f'<tg-emoji emoji-id="{emoji_id}">{emoji}</tg-emoji>'
+            text = text.replace(emoji, tag)
+    
+    return text
 
 for f in [SITES_FILE, PROXY_FILE, PREMIUM_FILE, ADMINS_FILE, BANNED_FILE]:
     if not os.path.exists(f):
